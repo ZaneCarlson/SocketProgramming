@@ -33,7 +33,6 @@ while True:
     
     if request == "QUIT\n":
         socket_client.sendall(request.encode())
-        print(request)
         msg = socket_client.recv(1024).decode()
         if msg == "200 OK":
             print("s:" + msg)
