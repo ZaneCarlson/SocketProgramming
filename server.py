@@ -19,25 +19,26 @@ while True:
         data = socket_client.recv(1024).decode()
         print(f"Received request: {data.strip()}")
         if data == "MSGGET\n":
-            msg = "200 OK\n" + message
-            socket_client.sendall(msg.encode())
+            sending_msg = "200 OK\n" + message
+            socket_client.sendall(sending_msg.encode())
             continue
-        elif data == "MSGSTORE\n":
-            msg = "200 OK"
-            socket_client.sendall(msg.encode())
+        if data == "MSGSTORE\n":
+            sending_msg = "200 OK"
+            socket_client.sendall(sending_msg.encode())
             data = socket_client.recv(1024).decode()
-            print(f"Received message: {data.strip()}")
-            message = data.strip()
-            msg = "200 OK"
-            print(msg)
-            socket_client.sendall(msg.encode())
+            if data != "QUIT\n" and data != "SHUTDOWN\n":
+                print(f"Received message: {data.strip()}")
+                message = data.strip()
+                sending_msg = "200 OK"
+                socket_client.sendall(sending_msg.encode())
+                continue
             continue
-        elif data == "QUIT\n":
-            msg = "200 OK"
-            socket_client.sendall(msg.encode())
+        if data == "QUIT\n":
+            sending_msg = "200 OK"
+            socket_client.sendall(sending_msg.encode())
             print("Client has disconnected.")
             break
-        elif data == "SHUTDOWN\n":
+        if data == "SHUTDOWN\n":
             sending_msg = "300 PASSWORD REQUIRED"
             socket_client.sendall(sending_msg.encode())
             password_attempt = socket_client.recv(1024).decode()

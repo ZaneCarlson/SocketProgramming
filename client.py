@@ -21,19 +21,25 @@ while True:
             recieved_msg = socket_client.recv(1024).decode()
             print("s:" + recieved_msg)
             sending_msg = input("c:")
-            socket_client.sendall(sending_msg.encode())
-            recieved_msg = socket_client.recv(1024).decode()
-            print("s:" + recieved_msg)
-            continue
+            if sending_msg != "QUIT" and sending_msg != "SHUTDOWN":
+                socket_client.sendall(sending_msg.encode())
+                recieved_msg = socket_client.recv(1024).decode()
+                print("s:" + recieved_msg)
+                continue
+            else: 
+                request = sending_msg + "\n"
+                socket_client.sendall(request.encode())
+            
     
-    elif request == "QUIT\n":
+    if request == "QUIT\n":
         socket_client.sendall(request.encode())
+        print(request)
         msg = socket_client.recv(1024).decode()
         if msg == "200 OK":
             print("s:" + msg)
         break
 
-    elif request == "SHUTDOWN\n":
+    if request == "SHUTDOWN\n":
        socket_client.sendall(request.encode())
        recieved_msg = socket_client.recv(1024).decode()
        print("s:" + recieved_msg)
@@ -41,12 +47,13 @@ while True:
        socket_client.sendall(sending_msg.encode())
        recieved_msg = socket_client.recv(1024).decode()
        if recieved_msg == "200 OK SHUTTING DOWN":
+            print("s:" + recieved_msg)
             break
        elif recieved_msg == "400 INVALID PASSWORD":
             print("s:" + recieved_msg)
             continue
 
-    elif request == "MSGGET\n":
+    if request == "MSGGET\n":
         socket_client.sendall(request.encode())
         recieved_msg = socket_client.recv(1024).decode()
         print("s:" + recieved_msg)
@@ -56,7 +63,7 @@ while True:
 
 
     else:
-        print("Invalid request. Please try again.")
+        print("Invalid Command, try again.")
         continue
 
 
