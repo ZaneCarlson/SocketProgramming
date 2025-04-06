@@ -36,6 +36,7 @@ while True: #loop while waiting for a connection
                 continue
             continue
             #if the client reqests to store a message then prompt them for a message and store it in the variable message and cofirm that it was stored. continue command loop.
+            #if the client sends QUIT or SHUTDOWN then continue the loop and wait for the next command (client side will automatically send a repeat command of QUIT or SHUTDOWN).
 
         elif data == "QUIT\n":
             sending_msg = "200 OK"
