@@ -18,29 +18,28 @@ while True: #loop while waiting for a connection
     while True: #loop through the clients commands
         data = socket_client.recv(1024).decode() # Receive data from the client
         print(f"Received request: {data.strip()}")
-        
-
-        if data == "MSGGET\n":                   
-            msg = "200 OK\n" + message
-            socket_client.sendall(msg.encode())
+        if data == "MSGGET\n":
+            sending_msg = "200 OK\n" + message
+            socket_client.sendall(sending_msg.encode())
             continue
             #if the client requests the message of the day then send it to them and continue the loop
 
         elif data == "MSGSTORE\n":
-            msg = "200 OK"
-            socket_client.sendall(msg.encode())
+            sending_msg = "200 OK"
+            socket_client.sendall(sending_msg.encode())
             data = socket_client.recv(1024).decode()
-            print(f"Received message: {data.strip()}")
-            message = data.strip()
-            msg = "200 OK"
-            print(msg)
-            socket_client.sendall(msg.encode())
+            if data != "QUIT\n" and data != "SHUTDOWN\n":
+                print(f"Received message: {data.strip()}")
+                message = data.strip()
+                sending_msg = "200 OK"
+                socket_client.sendall(sending_msg.encode())
+                continue
             continue
             #if the client reqests to store a message then prompt them for a message and store it in the variable message and cofirm that it was stored. continue command loop.
 
         elif data == "QUIT\n":
-            msg = "200 OK"
-            socket_client.sendall(msg.encode())
+            sending_msg = "200 OK"
+            socket_client.sendall(sending_msg.encode())
             print("Client has disconnected.")
             break
             #if the client requests to quit then send them a 200 OK message and break out of the command loop.

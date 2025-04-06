@@ -19,19 +19,24 @@ while True: # Loop through the clients commands
     # Take the user input and append a newline character to it
 
     if request == "MSGSTORE\n":
-        socket_client.sendall(request.encode())
-        recieved_msg = socket_client.recv(1024).decode()
-        print("s:" + recieved_msg)
-        sending_msg = input("c:")
-        socket_client.sendall(sending_msg.encode())
-        recieved_msg = socket_client.recv(1024).decode()
-        print("s:" + recieved_msg)
-        continue
-        # If the client requests to MSGSTORE then send the message and wait for a 200 OK. 
-        # Then prompt the user for a message to store and send it to the server.
-        # Wait for a 200 OK message and print it to the console. Then continue the loop.
+            socket_client.sendall(request.encode())
+            recieved_msg = socket_client.recv(1024).decode()
+            print("s:" + recieved_msg)
+            sending_msg = input("c:")
+            if sending_msg != "QUIT" and sending_msg != "SHUTDOWN":
+                socket_client.sendall(sending_msg.encode())
+                recieved_msg = socket_client.recv(1024).decode()
+                print("s:" + recieved_msg)
+                continue
+            else: 
+                request = sending_msg + "\n"
+                socket_client.sendall(request.encode())
+            # If the client requests to MSGSTORE then send the message and wait for a 200 OK. 
+            # Then prompt the user for a message to store and send it to the server.
+            # Wait for a 200 OK message and print it to the console. Then continue the loop.
+            # If the user enters QUIT or SHUTDOWN then send that request to the server and continue to either the QUIT or SHUTDOWN block.
     
-    elif request == "QUIT\n":
+    if request == "QUIT\n":
         socket_client.sendall(request.encode())
         msg = socket_client.recv(1024).decode()
         if msg == "200 OK":
@@ -40,7 +45,7 @@ while True: # Loop through the clients commands
         # If the client requests QUIT then send the request to the server and wait for 200 OK then break the loop so the connection will be closed.
         
 
-    elif request == "SHUTDOWN\n":
+    if request == "SHUTDOWN\n":
        socket_client.sendall(request.encode())
        recieved_msg = socket_client.recv(1024).decode()
        print("s:" + recieved_msg)
@@ -48,6 +53,7 @@ while True: # Loop through the clients commands
        socket_client.sendall(sending_msg.encode())
        recieved_msg = socket_client.recv(1024).decode()
        if recieved_msg == "200 OK SHUTTING DOWN":
+            print("s:" + recieved_msg)
             break
        elif recieved_msg == "400 INVALID PASSWORD":
             print("s:" + recieved_msg)
@@ -57,7 +63,7 @@ while True: # Loop through the clients commands
         # Wait for a 200 OK SHUTTING DOWN message and break the loop to close the connection.
         # If the password is invalid then print the message and continue the loop.
 
-    elif request == "MSGGET\n":
+    if request == "MSGGET\n":
         socket_client.sendall(request.encode())
         recieved_msg = socket_client.recv(1024).decode()
         print("s:" + recieved_msg)
@@ -66,7 +72,7 @@ while True: # Loop through the clients commands
         # Then continue the loop.
 
     else:
-        print("Invalid request. Please try again.")
+        print("Invalid Command, try again.")
         continue
         # If the request is invalid then print an error message and continue the loop.
 
